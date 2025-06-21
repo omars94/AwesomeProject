@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation,...others }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const onLogin = () => {
     // TODO: add authentication logic
-    navigation.replace('Home');
+    // navigation.replace('Product');
+    others.setSignedIn(true)
+    
   };
 
   return (

@@ -1,6 +1,7 @@
 // src/screens/HomeScreen.js
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { View, FlatList, Text, StyleSheet } from 'react-native';
+import { View, FlatList, Text, StyleSheet, Button } from 'react-native';
 
 const products = [
   { id: '1', name: 'Product A', price: '$10' },
@@ -8,10 +9,18 @@ const products = [
   // add more products here
 ];
 
-export default function HomeScreen() {
+export default function HomeScreen(props) {
+  const navigation = useNavigation();
   const renderItem = ({ item }) => (
     <View style={styles.item}>
-      <Text style={styles.name}>{item.name}</Text>
+      <Text
+        style={styles.name}
+        onPress={() => {
+          navigation.navigate('Product');
+        }}
+      >
+        {item.name}
+      </Text>
       <Text style={styles.price}>{item.price}</Text>
     </View>
   );
@@ -20,9 +29,15 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <FlatList
         data={products}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         renderItem={renderItem}
         contentContainerStyle={styles.list}
+      />
+      <Button
+        onPress={() => {
+          props.setSignedIn(false);
+        }}
+        title="log out"
       />
     </View>
   );
