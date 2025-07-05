@@ -1,6 +1,13 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
-import { View, FlatList, TouchableOpacity } from 'react-native';
+import {
+  View,
+  FlatList,
+  TouchableOpacity,
+  Pressable,
+  Text,
+  Dimensions,
+} from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import styled, { useTheme } from 'styled-components/native';
 
@@ -49,19 +56,21 @@ export default function Products({ navigation, setSignedIn }) {
   const getProducts = async () => {
     try {
       const productsRes = await axios({
-        url: 'https://dummyjson.com/products',
+        // url: 'https://dummyjson.com/products',
+        url: 'http://127.0.0.1:3001/products',
         method: 'get',
         timeout: 3000,
       });
-      console.log(products);
-      let products = productsRes?.data?.products ?? [];
+      let products = productsRes?.data ?? [];
       products.map(p => {
         p.name = p.title;
         p.image = p.images[0];
         return p;
       });
       dispatch({ type: 'SET_PRODUCTS', payload: products });
-    } catch (e) {}
+    } catch (e) {
+      console.log(e, JSON.parse(JSON.stringify(e)));
+    }
   };
   useEffect(() => {
     getProducts();
@@ -97,6 +106,21 @@ export default function Products({ navigation, setSignedIn }) {
         <ProductDescription theme={theme} numberOfLines={2}>
           {item.description}
         </ProductDescription>
+        <Pressable
+          style={{
+            borderWidth: 1,
+            borderRadius: 10,
+            alignItems: 'center',
+            padding: 10,
+            margin: 5,
+            width: 100,
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+          }}
+          onPress={() => dispatch({ type: 'ADD_TO_CART', payload: item })}
+        >
+          <Text>Add to Cart</Text>
+        </Pressable>
       </ProductInfo>
     </TouchableOpacity>
   );
@@ -114,6 +138,121 @@ export default function Products({ navigation, setSignedIn }) {
         contentContainerStyle={{ padding: 10 }}
         showsVerticalScrollIndicator={false}
       />
+      <Pressable
+        style={{
+          borderWidth: 1,
+          borderRadius: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 10,
+          margin: 5,
+          backgroundColor: 'green',
+          height: 100,
+        }}
+        onPress={async () => {
+          try {
+            const product = {
+              title: 'Kiwi2',
+              description:
+                'Nutrient-rich kiwi, perfect for snacking or adding a tropical twist to your dishes.',
+              category: 'groceries',
+              price: 2.49,
+              discountPercentage: 15.22,
+              rating: 4.93,
+              stock: 99,
+              tags: ['fruits'],
+              sku: 'GRO-BRD-KIW-030',
+              weight: 5,
+              dimensions: {
+                width: 19.4,
+                height: 18.67,
+                depth: 17.13,
+              },
+              warrantyInformation: '6 months warranty',
+              shippingInformation: 'Ships overnight',
+              availabilityStatus: 'In Stock',
+              reviews: [
+                {
+                  rating: 4,
+                  comment: 'Highly recommended!',
+                  date: '2025-04-30T09:41:02.053Z',
+                  reviewerName: 'Emily Brown',
+                  reviewerEmail: 'emily.brown@x.dummyjson.com',
+                },
+                {
+                  rating: 2,
+                  comment: 'Would not buy again!',
+                  date: '2025-04-30T09:41:02.053Z',
+                  reviewerName: 'Jackson Morales',
+                  reviewerEmail: 'jackson.morales@x.dummyjson.com',
+                },
+                {
+                  rating: 4,
+                  comment: 'Fast shipping!',
+                  date: '2025-04-30T09:41:02.053Z',
+                  reviewerName: 'Nora Russell',
+                  reviewerEmail: 'nora.russell@x.dummyjson.com',
+                },
+              ],
+              returnPolicy: '7 days return policy',
+              minimumOrderQuantity: 30,
+              meta: {
+                createdAt: '2025-04-30T09:41:02.053Z',
+                updatedAt: '2025-04-30T09:41:02.053Z',
+                barcode: '2530169917252',
+                qrCode: 'https://cdn.dummyjson.com/public/qr-code.png',
+              },
+              images: [
+                'https://cdn.dummyjson.com/product-images/groceries/kiwi/1.webp',
+              ],
+              thumbnail:
+                'https://cdn.dummyjson.com/product-images/groceries/kiwi/thumbnail.webp',
+              name: 'Kiwi',
+              image:
+                'https://cdn.dummyjson.com/product-images/groceries/kiwi/1.webp',
+            };
+            const res = await axios({
+              url: 'http://localhost:3001/products',
+              method: 'post',
+              timeout: 3000,
+              data: { ...product },
+            });
+            console.log(res);
+          } catch (error) {
+            console.log(error);
+          }
+        }}
+      >
+        <Text style={{ color: 'white' }}>Add Product</Text>
+      </Pressable>
+      <Pressable
+        style={{
+          borderWidth: 1,
+          borderRadius: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 10,
+          margin: 5,
+          backgroundColor: 'green',
+          height: 100,
+        }}
+        onPress={async () => {
+          try {
+            const res = await axios({
+              url: 'http://localhost:3001/products/23',
+              method: 'delete',
+              timeout: 3000,
+              // data: { ...product   },
+            });
+            console.log(res);
+            getProducts();
+          } catch (error) {
+            console.log(error);
+          }
+        }}
+      >
+        <Text style={{ color: 'white' }}>delete Product</Text>
+      </Pressable>
       <LogoutButton theme={theme} onPress={() => setSignedIn(false)}>
         <LogoutText theme={theme}>Log out</LogoutText>
       </LogoutButton>

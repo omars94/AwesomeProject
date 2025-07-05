@@ -1,15 +1,21 @@
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Products from '../../screens/Products';
 import ProductDetails from '../../screens/ProductDetails';
+import Cart from '../../screens/Cart';
+import Settings from '../../screens/Settings';
 import { useTheme } from 'styled-components/native';
 
+const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-export default function Main({ setSignedIn, signedIn }) {
+function ProductsStack({ setSignedIn, signedIn }) {
   const theme = useTheme();
   return (
     <Stack.Navigator
       screenOptions={{
+        headerShown: false,
         headerStyle: { backgroundColor: theme.accent },
         headerTintColor: theme.buttonText,
         headerTitleStyle: { fontWeight: 'bold' },
@@ -34,5 +40,23 @@ export default function Main({ setSignedIn, signedIn }) {
         component={ProductDetails}
       />
     </Stack.Navigator>
+  );
+}
+
+export default function Main({ setSignedIn, signedIn }) {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="ProductsTab" options={{ title: 'Products' }}>
+        {props => (
+          <ProductsStack
+            {...props}
+            setSignedIn={setSignedIn}
+            signedIn={signedIn}
+          />
+        )}
+      </Tab.Screen>
+      <Tab.Screen name="Cart" component={Cart} />
+      <Tab.Screen name="Settings" component={Settings} />
+    </Tab.Navigator>
   );
 }
